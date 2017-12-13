@@ -1,0 +1,38 @@
+{
+  "name": "github-and-npm-package-stats",
+  "version": "0.0.1-alpha",
+  "description": "This is a CLI made on Node.JS to check the stats of npm packages and GitHub open source projects.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/faisal3325/github-and-npm-package-stats.git"
+  },
+  "keywords": [
+    "node.js",
+    "cli",
+    "node",
+    "npm",
+    "github",
+    "statistics",
+    "stats",
+    "manager"
+  ],
+  "author": "Pathan Faisal Khan",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/faisal3325/github-and-npm-package-stats/issues"
+  },
+  "homepage": "https://github.com/faisal3325/github-and-npm-package-stats#readme",
+  "dependencies": {
+    "chalk": "^2.3.0",
+    "commander": "^2.12.2",
+    "inquirer": "^4.0.1",
+    "prompt": "^1.0.0"
+  },
+  "bin": {
+    "stats-check": "./index.js"
+  }
+}
