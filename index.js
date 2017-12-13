@@ -2,16 +2,18 @@
 'use strict';
 
 const program = require('commander'), 
-chalk = require("chalk"), 
-prompt = require('prompt'), 
-pkg = require('./package.json'), 
-inquirer = require('inquirer');
+    chalk = require('chalk'), 
+    prompt = require('prompt'), 
+    pkg = require('./package.json'), 
+    inquirer = require('inquirer'),
+    https = require('https');
 
 const version = '0.0.1-alpha'
 const desc = {
     desc: "This is a CLI made on Node.JS to check the stats of NPM packages and GitHub open source projects.",
     init: "This command will initialize the CLI by saving your NPM package and GitHub repo details."
 }
+let url = "https://api.npms.io/v2/package/";
 
 let initFunc = (options) =>    {
 
@@ -20,26 +22,14 @@ let initFunc = (options) =>    {
     if(options.npm) {
         console.log(chalk.yellow.bold("Let's initialize your NPM account."));
         console.log(chalk.white.bold('...'));
-        // console.log(chalk.yellow.bold("Please enter your npm package name: "));
-        
-        // prompt.start();
-        // prompt.get(['package'], function (err, result) {
-        //     if (err)    return onErr(err);
-        //     if(result.package == '')    return onErr(err);
-        //     console.log(chalk.green.bold(`You have added `) +  chalk.red.bold(`${result.package}`) + chalk.green.bold(` package.`));
-
-        // });
         let noAnswer = true;
         let question = {
             type: "input",
             name: "package",
             message: chalk.yellow.bold("Please enter your npm package name: ")
         };
-
-        let input = "error";
-        while(input == "error") {
-            input = getInput(question);
-        }
+        
+        let input = getInput(question);
         
     }   else if(options.github) {
         console.log(chalk.yellow.bold("Let's initialize your GitHub account."));
@@ -51,12 +41,35 @@ let getInput = (question) =>    {
         if(answers.package == '')   {
             console.log(answers.package);
             onErr(chalk.red.bold("Please enter a valid package name"));
-            return "error";
+            getInput(question);
         }   else    {
-            console.log(chalk.green.bold(`You have added `) +  chalk.red.bold(`${answers.package}`) + chalk.green.bold(` package.`));
+            console.log(chalk.green.bold(`You have added '`) +  chalk.red.bold(`${answers.package}`) + chalk.green.bold(`' package.`));
+            let query = url + "" + answers.package;
+            console.log(query);
+            https.get(query, (res) => {
+                let data = '';
+                res.on('data', (chunk) =>    {
+                    data += chunk; 
+                });
+                res.on('end', () =>    {
+                    // console.log(JSON.parse(data));
+                    console.log(JSON.parse(data).collected.npm);
+                    console.log(JSON.parse(data).collected.github);
+                    // npmData(JSON.parse(data).collected);
+                });
+              }).on('socket', (socket) => {
+                socket.emit('agentRemove');
+              }).on('error', (err) =>   {
+                onErr(chalk.red.bold("Error:") + chalk.red.bold(err));
+              });
             return answers;
         }
     });
+}
+
+let npmData = (data) => {
+    let stars, forks, subscriber, issues;
+    console.log(chalk.green.bold("Stats for the NPM package:"));
 }
 
 program.version(version)
